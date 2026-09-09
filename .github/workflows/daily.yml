@@ -11,7 +11,7 @@ jobs:
   push-note:
     runs-on: ubuntu-latest
     env:
-      GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
       WEBHOOK: ${{ secrets.WEBHOOK }}
     steps:
       - name: 检出代码
