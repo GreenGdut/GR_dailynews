@@ -1,0 +1,29 @@
+name: 每日推送
+run-name: 每日推送 ${{ github.event_name == 'schedule' && format('scheduled @ {0}', github.event.schedule) || 'manual' }}
+
+on:
+  schedule:
+    # GitHub Actions 的 cron 是 UTC；北京时间每天 06:00 = UTC 前一日 22:00
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  push-note:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      WEBHOOK: ${{ secrets.WEBHOOK }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: 安装依赖
+        run: pip install requests
+
+      - name: 拉取笔记并推送到企业微信
+        run: python main.py
