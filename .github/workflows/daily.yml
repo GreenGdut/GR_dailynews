@@ -3,16 +3,16 @@ run-name: 每日推送 ${{ github.event_name == 'schedule' && format('scheduled 
 
 on:
   schedule:
-    # GitHub Actions 的 cron 是 UTC；北京时间每天 06:00 = UTC 前一日 22:00
-    - cron: "0 22 * * *"
+    - cron: "17 22 * * *"
   workflow_dispatch:
 
 jobs:
   push-note:
     runs-on: ubuntu-latest
     env:
-      GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
-      WEBHOOK: ${{ secrets.WEBHOOK }}
+      GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+      PUSHPLUS_OPTION: ${{ secrets.PUSHPLUS_OPTION }}
     steps:
       - name: 检出代码
         uses: actions/checkout@v4

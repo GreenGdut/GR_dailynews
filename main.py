@@ -25,9 +25,15 @@ load_env()
 PAT = os.getenv("GITHUB_PAT")
 if not PAT:
     raise ValueError("GITHUB_PAT environment variable not set")
-WEBHOOK = os.getenv("WEBHOOK")
-if not WEBHOOK:
-    raise ValueError("WEBHOOK environment variable not set")
+
+PUSHPLUS_TOKEN = os.getenv("PUSHPLUS_TOKEN")
+if not PUSHPLUS_TOKEN:
+    raise ValueError("PUSHPLUS_TOKEN environment variable not set")
+
+PUSHPLUS_OPTION = os.getenv("PUSHPLUS_OPTION")
+if not PUSHPLUS_OPTION:
+    raise ValueError("PUSHPLUS_OPTION environment variable not set")
+
 
 def fetch_note():
     url = "https://api.github.com/repos/GreenGdut/my_knowledge/contents/!_tmp/todo/TODOlist.md"
@@ -40,11 +46,26 @@ def fetch_note():
     return resp.text
 
 def push_note(text:str) -> None:
-    payload = {"msgtype": "markdown",
-               "markdown": {"content": text}
-              }
-    resp = requests.post(WEBHOOK,json=payload)
+    payload = {
+        "token": PUSHPLUS_TOKEN,
+        "title": "TODOLIST",      
+        "content": text,             
+        "template": "markdown",
+        "channel": "webhook",
+        "option": PUSHPLUS_OPTION
+    }
+
+    resp = requests.post(
+        "https://www.pushplus.plus/send",
+        json=payload,
+        timeout=30
+    )
     resp.raise_for_status()
+
+    # PushPlus 即使 HTTP 200，业务码也可能不是 200，需要再检查一次
+    data = resp.json()
+    if data.get("code") != 200:
+        raise RuntimeError(f"PushPlus 推送失败: {data}")
 
 def main():
     note = fetch_note()
