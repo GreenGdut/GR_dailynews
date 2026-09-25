@@ -10,7 +10,7 @@ jobs:
   push-note:
     runs-on: ubuntu-latest
     env:
-      GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
       PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
       PUSHPLUS_OPTION: ${{ secrets.PUSHPLUS_OPTION }}
     steps:
